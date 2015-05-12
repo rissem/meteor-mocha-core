@@ -13,5 +13,5 @@ Npm.depends({
 Package.on_use(function (api, where) {
   api.use(['underscore@1.0.3'], ['client', 'server']);
   api.add_files(['server.js'], 'server');
-  //TODO export the important Mocha variables
+  api.export("setupGlobals", 'server');
 });
