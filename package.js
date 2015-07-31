@@ -1,5 +1,5 @@
 Package.describe({
-  name: 'mike:mocha-core',
+  name: 'practicalmeteor:mocha-core',
   summary: "Minimally wrapped mocha",
   version: "0.1.0",
   debugOnly: true,
