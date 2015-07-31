@@ -56,6 +56,7 @@ setupGlobals = function(mocha){
   // inside of describe blocks, to allow e.g. to set custom timeouts.
   function wrapRunnable(func) {
     return function() {
+      this.toString = function(){return func.toString()};
       // `this` will be bound to the suite instance, as of Mocha's `describe` implementation
       Meteor.bindEnvironment(func.bind(this), function(err) { throw err; })();
     }
@@ -97,6 +98,8 @@ setupGlobals = function(mocha){
     boundWrappedFunction = moddedBindEnvironment(wrappedFunc, function(err){
       throw err;
     });
+    // Show original's function source code
+    boundWrappedFunction.toString = function(){ return func.toString()};
 
     mochaExports['it'](name, boundWrappedFunction);
   };
