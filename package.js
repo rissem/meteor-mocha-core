@@ -6,9 +6,6 @@ Package.describe({
   git: "https://github.com/rissem/meteor-mocha-core"
 });
 
-Npm.depends({
-  mocha: "1.17.1",
-});
 
 Package.on_use(function (api, where) {
   api.use(['underscore@1.0.3'], ['client', 'server']);

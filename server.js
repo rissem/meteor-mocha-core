@@ -1,4 +1,3 @@
-var Mocha = Npm.require("mocha");
 var Fiber = Npm.require("fibers");
 
 setupGlobals = function(mocha){
