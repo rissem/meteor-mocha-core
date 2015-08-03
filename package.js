@@ -1,9 +1,9 @@
 Package.describe({
   name: 'practicalmeteor:mocha-core',
   summary: "Minimally wrapped mocha",
-  version: "0.1.0",
+  version: "0.1.1",
   debugOnly: true,
-  git: "https://github.com/rissem/meteor-mocha-core"
+  git: "https://github.com/practicalmeteor/meteor-mocha-core.git"
 });
 
 
