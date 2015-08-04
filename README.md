@@ -1,5 +1,7 @@
 # practicalmeteor:mocha-core
 
+This is an internal package. Please use [practicalmeteor:mocha](https://atmospherejs.com/practicalmeteor/mocha).
+
 This is a fork of [mike:mocha-core](https://atmospherejs.com/mike/mocha-core) with the following changes:
 
 1. Removed the mocha npm dependency so we can use any mocha version with the server side fibers aware code that mike has created.
