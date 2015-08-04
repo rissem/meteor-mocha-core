@@ -1,6 +1,6 @@
 Package.describe({
   name: 'practicalmeteor:mocha-core',
-  summary: "Minimally wrapped mocha",
+  summary: "Fibers aware mocha server side wrappers.",
   version: "0.1.1",
   debugOnly: true,
   git: "https://github.com/practicalmeteor/meteor-mocha-core.git"
