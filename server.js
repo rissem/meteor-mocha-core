@@ -94,11 +94,11 @@ setupGlobals = function(mocha){
   };
 
   global.describe = function (name, func){
-    return mochaExports.describe(name, moddedBindEnvironment(func.bind(this), function(err) { throw err; }));
+    return mochaExports.describe(name, moddedBindEnvironment(func, function(err) { throw err; }), this);
   };
   global.describe.skip = mochaExports.describe.skip;
   global.describe.only = function(name, func) {
-    mochaExports.describe.only(name, moddedBindEnvironment(func.bind(this), function(err) { throw err; }));
+    mochaExports.describe.only(name, moddedBindEnvironment(func, function(err) { throw err; }), this);
   };
 
   global['it'] = function (name, func){
