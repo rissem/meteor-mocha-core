@@ -24,7 +24,8 @@ setupGlobals = function(mocha){
     //Metoer.bindEnvironment this is ` return function (/* arguments */) {`
     return function (callback) {
       var args = _.toArray(arguments);
-      // Apply mocha suite context
+      // If _this is not provided, then function 'this' will be used,
+      // which is the mocha suite context in 'it', 'beforeEach', etc.
       _this = _this || this;
 
       var runWithEnvironment = function () {
