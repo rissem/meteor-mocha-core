@@ -103,7 +103,15 @@ setupGlobals = function(mocha){
   };
 
   global['it'] = function (name, func){
-    mochaExports['it'](name, wrapRunnable(func));
+    
+    // You can create pending tests without a callback
+    // http://mochajs.org/#pending-tests
+    // i.e pending test
+    // it('this is a pending test');
+    if (func){
+      func =  wrapRunnable(func);
+    }
+    mochaExports['it'](name, func);
   };
   global.it.skip = mochaExports.it.skip;
   global.it.only = function(name, func) {
