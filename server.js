@@ -14,7 +14,7 @@ setupGlobals = function(mocha){
     //run within a fiber. We must therefore wrap each with something like
     //bindEnvironment. The function passed off to mocha must have length
     //greater than zero if we want mocha to run it asynchronously. That's
-    //why it uses the moddedBindEnvironment function described above instead
+    //why it uses the Fibers
 
     //We're actually having mocha run all tests asynchronously. This
     //is because mocha cannot tell when a synchronous fiber test has
@@ -47,7 +47,7 @@ setupGlobals = function(mocha){
       Fiber(run).run();
     };
 
-    // Show original's function source code
+    // Show original function source code
     wrappedFunction.toString = function(){return func.toString()};
     return wrappedFunction;
   };
@@ -57,7 +57,7 @@ setupGlobals = function(mocha){
   global.describe.only = mochaExports.describe.only;
 
   global['it'] = function (name, func){
-    // You can create pending tests without a callback
+    // You can create pending tests without a function
     // http://mochajs.org/#pending-tests
     // i.e pending test
     // it('this is a pending test');
@@ -71,9 +71,9 @@ setupGlobals = function(mocha){
     mochaExports.it.only(name, wrapRunnable(func));
   };
 
-  ["before", "beforeEach", "after", "afterEach"].forEach(function(testFunctionName){
-    global[testFunctionName] = function (func){
-      mochaExports[testFunctionName](wrapRunnable(func));
+  ["before", "beforeEach", "after", "afterEach"].forEach(function(funcName){
+    global[funcName] = function (func){
+      mochaExports[funcName](wrapRunnable(func));
     }
   });
 };
