@@ -7,7 +7,7 @@ Package.describe({
 });
 
 Npm.depends({
-  mocha: '2.4.5',
+  mocha: '2.4.5'
 });
 
 Package.onUse(function (api, where) {

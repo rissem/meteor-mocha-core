@@ -48,33 +48,44 @@ function setupGlobals(mocha) {
     return wrappedFunction;
   };
 
-  global.describe = mochaExports.describe;
-  global.describe.skip = mochaExports.describe.skip;
-  global.describe.only = mochaExports.describe.only;
-
-  global.it = function (name, func){
+  mochaExports["__org_it"] = mochaExports["it"];
+  mochaExports['it'] = function (name, func) {
     // You can create pending tests without a function
     // http://mochajs.org/#pending-tests
-    // i.e. pending test
+    // i.e pending test
     // it('this is a pending test');
-    if (func) func = wrapRunnable(func);
-    mochaExports.it(name, func);
+    if (func) {
+      func = wrapRunnable(func);
+    }
+    mochaExports["__org_it"](name, func);
   };
-  global.it.skip = mochaExports.it.skip;
-  global.it.only = function (name, func) {
-    mochaExports.it.only(name, wrapRunnable(func));
+  mochaExports.it.skip = mochaExports["__org_it"].skip;
+  mochaExports.it.only = (name, func) => {
+    mochaExports["__org_it"].only(name, wrapRunnable(func));
   };
 
-  ['before', 'beforeEach', 'after', 'afterEach'].forEach(funcName => {
-    global[funcName] = function (func) {
-      mochaExports[funcName](wrapRunnable(func));
-    };
+
+  let hooks = ["before", "beforeEach", "after", "afterEach"];
+  hooks.forEach((hook)=> {
+    mochaExports[`__org_${hook}`] = mochaExports[hook];
+    mochaExports[hook] = (func)=> {
+      mochaExports[`__org_${hook}`](wrapRunnable(func));
+    }
   });
+
+  Object.keys(mochaExports).forEach((key)=>{
+    // We don't want original function to be export to global namespace
+    // if(key.indexOf("__org_") > -1 || key.indexOf("run") > -1){
+    //   return;
+    // }
+    global[key] = mochaExports[key];
+  })
+
 };
 
 // Initialize a new `Mocha` test runner instance that test driver packages
 // can use to ensure they work well with other test driver packages.
 const mochaInstance = new Mocha();
 setupGlobals(mochaInstance);
-
+ 
 export { mochaInstance, setupGlobals };
