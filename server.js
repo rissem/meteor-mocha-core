@@ -88,4 +88,4 @@ function setupGlobals(mocha) {
 const mochaInstance = new Mocha();
 setupGlobals(mochaInstance);
  
-export { mochaInstance, setupGlobals };
+export { mochaInstance, setupGlobals, Mocha };
