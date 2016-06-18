@@ -1,15 +1,16 @@
 # practicalmeteor:mocha-core
 
-This is an internal package. Please use [practicalmeteor:mocha](https://atmospherejs.com/practicalmeteor/mocha).
+This is an internal package. Please use one of the following test driver packages:
 
-This is a fork of [mike:mocha-core](https://atmospherejs.com/mike/mocha-core) with the following changes:
+## Meteor pre-1.3
 
-1. Removed the mocha npm dependency so we can use any mocha version with the server side fibers aware code that mike has created.
+* [practicalmeteor:mocha](https://atmospherejs.com/practicalmeteor/mocha) Runs client and server code tests and displays all results in a browser. Use [spacejam](https://www.npmjs.com/package/spacejam) for command line / CI support.
 
-2. It includes the source code of server side tests, so it can be displayed in reporters. We will create a PR for this with mike.
+## Meteor 1.3+
 
-This package is used in [practicalmeteor:mocha](https://atmospherejs.com/practicalmeteor/mocha), which was created in order to be able to run mocha tests:
+Choose the one that makes sense for your app. You may depend on more than one.
 
-1. From the command line using [spacejam](https://www.npmjs.com/package/spacejam)
-
-2. In the browser, with no dependency on either mongodb nor velocity.
+* [practicalmeteor:mocha](https://atmospherejs.com/practicalmeteor/mocha) Runs client and server package or app tests and displays all results in a browser. Use [spacejam](https://www.npmjs.com/package/spacejam) for command line / CI support.
+* [dispatch:mocha-phantomjs](https://atmospherejs.com/dispatch/mocha-phantomjs) Runs client and server package or app tests using PhantomJS and reports all results in the server console. Can be used for running tests on a CI server. Has a watch mode.
+* [dispatch:mocha-browser](https://atmospherejs.com/dispatch/mocha-browser) Runs client and server package or app tests with Mocha reporting client results in a web browser and server results in the server console. Has a watch mode.
+* [dispatch:mocha](https://atmospherejs.com/dispatch/mocha) Runs server-only package or app tests with Mocha and reports all results in the server console. Can be used for running tests on a CI server. Has a watch mode.

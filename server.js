@@ -1,15 +1,14 @@
-var Fiber = Npm.require("fibers");
+import Fiber from 'fibers';
+import Mocha from 'mocha';
 
-setupGlobals = function(mocha){
-
+function setupGlobals(mocha) {
   var mochaExports = {};
-  mocha.suite.emit("pre-require", mochaExports, undefined, mocha);
+  mocha.suite.emit('pre-require', mochaExports, undefined, mocha);
 
   // 1. patch up it and hooks functions so it plays nice w/ fibers
   // 2. trick to allow binding the suite instance as `this` value
   // inside of suites blocks, to allow e.g. to set custom timeouts.
-  var wrapRunnable = function (func) {
-
+  var wrapRunnable = function (fn) {
     //In Meteor, these blocks will all be invoking Meteor code and must
     //run within a fiber. We must therefore wrap each with something like
     //bindEnvironment. The function passed off to mocha must have length
@@ -24,56 +23,91 @@ setupGlobals = function(mocha){
     //fiber, but it was unclear to me how that could be done without
     //forking mocha itself.
 
-
-    var wrappedFunction = function (done) {
-      var self = this;
+    const wrappedFunction = function (done) {
+      var self = this._runnable;
       var run = function() {
         try {
-          if (func.length == 0) {
-            func.call(self);
-            done();
+          // Sync call
+          if (fn.length == 0) {
+            var result = fn.call(self);
+            if (result && typeof result.then === 'function') {
+              self.resetTimeout();
+              result
+                .then(function() {
+                    done();
+                    // Return null so libraries like bluebird do not warn about
+                    // subsequently constructed Promises.
+                    return null;
+                  },
+                  function(reason) {
+                    done(reason || new Error('Promise rejected with no or falsy reason'));
+                  });
+            } else {
+              if (self.asyncOnly) {
+                return done(new Error('--async-only option in use without declaring `done()` or returning a promise'));
+              }
+
+              done();
+            }
           }
           else {
-            func.call(self, done);
+            fn.call(self, done);
           }
         } catch (error) {
           done(error);
         }
       };
 
-      if (Fiber.current) {
-        return run();
-      }
+      if (Fiber.current) return run();
       Fiber(run).run();
     };
 
     // Show original function source code
-    wrappedFunction.toString = function(){return func.toString()};
+    wrappedFunction.toString = function () { return fn.toString() };
     return wrappedFunction;
   };
 
-  global.describe = mochaExports.describe;
-  global.describe.skip = mochaExports.describe.skip;
-  global.describe.only = mochaExports.describe.only;
-
-  global['it'] = function (name, func){
+  mochaExports["__org_it"] = mochaExports["it"];
+  mochaExports['it'] = function (name, func) {
     // You can create pending tests without a function
     // http://mochajs.org/#pending-tests
     // i.e pending test
     // it('this is a pending test');
-    if (func){
-      func =  wrapRunnable(func);
+    if (func) {
+      func = wrapRunnable(func);
     }
-    mochaExports['it'](name, func);
+    return mochaExports["__org_it"](name, func);
   };
-  global.it.skip = mochaExports.it.skip;
-  global.it.only = function(name, func) {
-    mochaExports.it.only(name, wrapRunnable(func));
+  mochaExports.it.skip = mochaExports["__org_it"].skip;
+  mochaExports.it.only = (name, func) => {
+    mochaExports["__org_it"].only(name, wrapRunnable(func));
   };
 
-  ["before", "beforeEach", "after", "afterEach"].forEach(function(funcName){
-    global[funcName] = function (func){
-      mochaExports[funcName](wrapRunnable(func));
+
+  let hooks = ["before", "beforeEach", "after", "afterEach"];
+  hooks.forEach((hook)=> {
+    mochaExports[`__org_${hook}`] = mochaExports[hook];
+    mochaExports[hook] = (func)=> {
+     return  mochaExports[`__org_${hook}`](wrapRunnable(func));
     }
   });
+
+  Object.keys(mochaExports).forEach((key)=>{
+    // We don't want original function to be export to global namespace
+    if(key.indexOf("__org_") > -1 || key.indexOf("run") > -1){
+      return;
+    }
+    global[key] = mochaExports[key];
+  })
+
 };
+
+// Initialize a new `Mocha` test runner instance that test driver packages
+// can use to ensure they work well with other test driver packages.
+const mochaInstance = new Mocha({
+  ui: 'bdd',
+  ignoreLeaks: true
+});
+setupGlobals(mochaInstance);
+ 
+export { mochaInstance, setupGlobals, Mocha };
