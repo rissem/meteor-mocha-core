@@ -1,5 +1,7 @@
 import Fiber from 'fibers';
+import "./setup"
 import Mocha from 'mocha';
+import "./cleanup"
 
 function setupGlobals(mocha) {
   var mochaExports = {};
