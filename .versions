@@ -1,3 +1,10 @@
-meteor@1.1.6
-mike:mocha-core@0.1.0
-underscore@1.0.3
+babel-compiler@6.8.3
+babel-runtime@0.1.9_1
+ecmascript@0.4.6_1
+ecmascript-runtime@0.2.11_1
+meteor@1.1.15_1
+modules@0.6.4
+modules-runtime@0.6.4_1
+practicalmeteor:mocha-core@1.0.1
+promise@0.7.2_1
+underscore@1.0.9
